@@ -6,8 +6,9 @@ Plugin URI: https://www.dingxiang-inc.com/
 Description: Dingxiang™验证码WordPress插件.
 Version: 1.0.0
 Author: 250king
-Author URI: https://250king.top/
-License: GPL2
+Author URI: https://www.250king.top/
+License: GPL3
+License URI: https://www.gnu.org/licenses/gpl-3.0.html
 */
 
 require "lib/config.php";
