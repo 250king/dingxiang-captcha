@@ -1,7 +1,7 @@
 <?php
 /*
  * 为压缩代码，前端JS源码已经压缩混淆
- * 前端JS源码请查阅 https://github.com/250king/dingxiang-captcha/blob/master/asset/frontend.js
+ * 前端JS源码请查阅 https://github.com/250king/dingxiang-captcha/blob/master/asset/javascript/frontend.js
  */
 function captcha_common_script($submit, $form): void {
 	global $wpdb;
