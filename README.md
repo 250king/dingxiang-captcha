@@ -12,12 +12,16 @@
 > 有bug请提交Issue。新手上路，难免有不足之处。
 
 1. 直接下载源码，点击Download ZIP
+    
     ![img.png](asset/image/1.png)
 2. 打开自己的网站管理界面，然后点击左侧导航栏“插件”->“安装插件”
+
     ![img.png](asset/image/2.png)
 3. 上传插件并安装
+    
     ![img.png](asset/image/3.png)
 4. 激活插件后，点击左侧导航栏“设置”->“顶象™验证码”，完成相关设置
+
     ![img.png](asset/image/4.png)
 
     App ID和App Secret请自行前往[https://console.dingxiang-inc.com/#/captcha/services](https://console.dingxiang-inc.com/#/captcha/services)查看
