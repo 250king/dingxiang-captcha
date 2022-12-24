@@ -2,7 +2,7 @@
 
 /*
 Plugin Name: Dingxiang™ Captcha
-Plugin URI: https://www.dingxiang-inc.com/
+Plugin URI: https://github.com/250king/dingxiang-captcha
 Description: Dingxiang™验证码WordPress插件.
 Version: 1.0.0
 Author: 250king
