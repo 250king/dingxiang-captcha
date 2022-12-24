@@ -32,6 +32,7 @@ function captcha_plugin_enable(): void {
 		$wpdb->query("INSERT INTO $table_name (`key`) VALUES ('login')");
 		$wpdb->query("INSERT INTO $table_name (`key`) VALUES ('register')");
 		$wpdb->query("INSERT INTO $table_name (`key`) VALUES ('reset')");
+		$wpdb->query("INSERT INTO $table_name (`key`) VALUES ('commit')");
 		update_option("captcha_setting_table", time());
 	}
 }
@@ -42,11 +43,11 @@ function captcha_plugin_remove(): void {
 	delete_option("captcha_setting_table");
 }
 function captcha_add_config_page(): void {
-	add_menu_page("顶象™验证码", "顶象™验证码", "manage_options", "captcha_setting", "config_page");
+	add_submenu_page("options-general.php", "顶象™验证码", "顶象™验证码", "manage_options", "dx-captcha", "config_page");
 }
 function captcha_add_action_link($links, $file) {
 	if (plugin_basename(__FILE__) == $file) {
-		array_unshift($links, '<a href="admin.php?page=captcha_setting">设置</a>');
+		array_unshift($links, '<a href="options-general.php?page=dx-captcha">设置</a>');
 	}
 	return $links;
 }
@@ -55,22 +56,61 @@ register_activation_hook(__FILE__, "captcha_plugin_enable");
 register_uninstall_hook(__FILE__, "captcha_plugin_remove");
 add_action("admin_menu", "captcha_add_config_page");
 add_filter("plugin_action_links", "captcha_add_action_link", 10, 2);
-$table_name = $wpdb->prefix."captcha_setting";
-$login = boolval($wpdb->get_var("SELECT `value` FROM $table_name WHERE `key`='login'"));
-$reset = boolval($wpdb->get_var("SELECT `value` FROM $table_name WHERE `key`='reset'"));
-$register = boolval($wpdb->get_var("SELECT `value` FROM $table_name WHERE `key`='register'"));
-if ($login) {
-	add_action("login_form", "captcha_common_form");
-	add_filter("wp_authenticate_user", "captcha_login_check");
-}
-if ($reset) {
-	add_action("lostpassword_form", "captcha_common_form");
-	add_filter("allow_password_reset", "captcha_reset_register_check");
-}
-if ($register) {
-	add_action("register_form", "captcha_common_form");
-	add_filter("registration_errors", "captcha_reset_register_check");
-}
-if ($login || $reset || $register) {
-	add_action("login_footer", "captcha_common_script");
-}
+add_action("init", function () {
+	global $wpdb;
+	$table_name = $wpdb->prefix."captcha_setting";
+	$login = boolval($wpdb->get_var("SELECT `value` FROM $table_name WHERE `key`='login'"));
+	$reset = boolval($wpdb->get_var("SELECT `value` FROM $table_name WHERE `key`='reset'"));
+	$register = boolval($wpdb->get_var("SELECT `value` FROM $table_name WHERE `key`='register'"));
+	$commit = boolval($wpdb->get_var("SELECT `value` FROM $table_name WHERE `key`='commit'"));
+	if ($login) {
+		add_action("login_form", "captcha_common_form");
+		add_filter("authenticate", "captcha_login_check");
+	}
+	if ($reset) {
+		add_action("lostpassword_form", "captcha_common_form");
+		add_filter("reset", "captcha_reset_register_check");
+	}
+	if ($register) {
+		add_action("register_form", "captcha_common_form");
+		add_filter("registration_errors", "captcha_reset_register_check");
+	}
+	if ($login || $reset || $register) {
+		if (isset($_REQUEST["action"])) {
+			switch ($_REQUEST["action"]) {
+				case "lostpassword":
+					if ($reset) {
+						add_action("login_footer", function () {
+							captcha_common_script("wp-submit", "lostpasswordform");
+						});
+					}
+					break;
+				case "register":
+					if ($register) {
+						add_action("login_footer", function () {
+							captcha_common_script("wp-submit", "registerform");
+						});
+					}
+					break;
+				default:
+					if ($login) {
+						add_action("login_footer", function () {
+							captcha_common_script("wp-submit", "loginform");
+						});
+					}
+					break;
+			}
+		}
+		else if ($login){
+			add_action("login_footer", function () {
+				captcha_common_script("wp-submit", "loginform");
+			});
+		}
+	}
+	if ($commit && is_user_logged_in()) {
+		add_action("comment_form", "captcha_common_form");
+		add_action("", function () {
+			captcha_common_script("submit", "commentform");
+		}, "submit");
+	}
+});

@@ -6,7 +6,8 @@ function config_page(): void {
     $client_secret = $wpdb->get_var("SELECT `value` FROM $table_name WHERE `key`='client_secret'");
     $login = boolval($wpdb->get_var("SELECT `value` FROM $table_name WHERE `key`='login'"));
     $reset = boolval($wpdb->get_var("SELECT `value` FROM $table_name WHERE `key`='reset'"));
-    $register = boolval($wpdb->get_var("SELECT `value` FROM $table_name WHERE `key`='register'"))
+    $register = boolval($wpdb->get_var("SELECT `value` FROM $table_name WHERE `key`='register'"));
+    $commit = boolval($wpdb->get_var("SELECT `value` FROM $table_name WHERE `key`='commit'"))
     ?>
 	<div class="wrap">
 		<h2>顶象™验证码</h2>
@@ -22,9 +23,11 @@ function config_page(): void {
 		        $login = isset($_POST["login"])? 1: 0;
 		        $reset = isset($_POST["reset"])? 1: 0;
 		        $register = isset($_POST["register"])? 1: 0;
+                $commit = isset($_POST["commit"])? 1: 0;
 		        $wpdb->query("UPDATE $table_name SET `value`='$login' WHERE `key`='login'");
 		        $wpdb->query("UPDATE $table_name SET `value`='$reset' WHERE `key`='reset'");
 		        $wpdb->query("UPDATE $table_name SET `value`='$register' WHERE `key`='register'");
+		        $wpdb->query("UPDATE $table_name SET `value`='$commit' WHERE `key`='commit'");
 	        }
             ?>
             <div class="updated fade">
@@ -90,6 +93,14 @@ function config_page(): void {
                                     </th>
                                     <td>
                                         <input type="checkbox" id="register" name="register" <?php echo $register? "checked": ""?>>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>
+                                        <label for="commit">评论区</label>
+                                    </th>
+                                    <td>
+                                        <input type="checkbox" id="commit" name="commit" <?php echo $commit? "checked": ""?>>
                                     </td>
                                 </tr>
                             </table>
