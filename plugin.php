@@ -64,16 +64,16 @@ add_action("init", function () {
 	$register = boolval($wpdb->get_var("SELECT `value` FROM $table_name WHERE `key`='register'"));
 	$commit = boolval($wpdb->get_var("SELECT `value` FROM $table_name WHERE `key`='commit'"));
 	if ($login) {
-		add_filter("authenticate", "captcha_login_check");
 		add_action("login_form", "captcha_common_form");
+		add_filter("authenticate", "captcha_login_check");
 	}
 	if ($reset) {
-		add_filter("lostpassword_user_data", "captcha_reset_check");
 		add_action("lostpassword_form", "captcha_common_form");
+		add_filter("lostpassword_user_data", "captcha_reset_check");
 	}
 	if ($register) {
-		add_filter("user_registration_email", "captcha_register_check");
 		add_action("register_form", "captcha_common_form");
+		add_filter("user_registration_email", "captcha_register_check");
 	}
 	if ($login || $reset || $register) {
 		$action = $_REQUEST['action'] ?? 'login';
@@ -106,8 +106,8 @@ add_action("init", function () {
 	if ($commit && !is_user_logged_in()) {
 		add_filter("preprocess_comment", "captcha_commit_check");
 		add_action("comment_form", "captcha_common_form");
-		add_action("comment_form_after", function () {
+		add_action("comment_form_after_fields", function () {
 			captcha_common_script("submit", "commentform");
-		}, "submit");
+		});
 	}
 });
