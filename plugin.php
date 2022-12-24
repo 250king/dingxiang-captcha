@@ -106,7 +106,7 @@ add_action("init", function () {
 	if ($commit && !is_user_logged_in()) {
 		add_filter("preprocess_comment", "captcha_commit_check");
 		add_action("comment_form", "captcha_common_form");
-		add_action("comment_form_after_fields", function () {
+		add_action("comment_form_after", function () {
 			captcha_common_script("submit", "commentform");
 		});
 	}
