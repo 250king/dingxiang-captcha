@@ -47,7 +47,7 @@ function config_page(): void {
                             <table class="form-table">
                                 <tr>
                                     <th>
-                                        <label for="client_id">Client ID</label>
+                                        <label for="client_id">APP ID</label>
                                     </th>
                                     <td>
                                         <input type="text" id="client_id" name="client_id" value="<?php echo $client_id?>">
@@ -55,7 +55,7 @@ function config_page(): void {
                                 </tr>
                                 <tr>
                                     <th>
-                                        <label for="client_secret">Client Secret</label>
+                                        <label for="client_secret">APP Secret</label>
                                     </th>
                                     <td>
                                         <input type="text" id="client_secret" name="client_secret" value="<?php echo $client_secret?>">
