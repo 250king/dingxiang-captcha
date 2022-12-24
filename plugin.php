@@ -64,52 +64,49 @@ add_action("init", function () {
 	$register = boolval($wpdb->get_var("SELECT `value` FROM $table_name WHERE `key`='register'"));
 	$commit = boolval($wpdb->get_var("SELECT `value` FROM $table_name WHERE `key`='commit'"));
 	if ($login) {
-		add_action("login_form", "captcha_common_form");
 		add_filter("authenticate", "captcha_login_check");
+		add_action("login_form", "captcha_common_form");
 	}
 	if ($reset) {
+		add_filter("lostpassword_user_data", "captcha_reset_check");
 		add_action("lostpassword_form", "captcha_common_form");
-		add_filter("reset", "captcha_reset_register_check");
 	}
 	if ($register) {
+		add_filter("user_registration_email", "captcha_register_check");
 		add_action("register_form", "captcha_common_form");
-		add_filter("registration_errors", "captcha_reset_register_check");
 	}
 	if ($login || $reset || $register) {
-		if (isset($_REQUEST["action"])) {
-			switch ($_REQUEST["action"]) {
-				case "lostpassword":
-					if ($reset) {
-						add_action("login_footer", function () {
-							captcha_common_script("wp-submit", "lostpasswordform");
-						});
-					}
-					break;
-				case "register":
-					if ($register) {
-						add_action("login_footer", function () {
-							captcha_common_script("wp-submit", "registerform");
-						});
-					}
-					break;
-				default:
-					if ($login) {
-						add_action("login_footer", function () {
-							captcha_common_script("wp-submit", "loginform");
-						});
-					}
-					break;
-			}
-		}
-		else if ($login){
-			add_action("login_footer", function () {
-				captcha_common_script("wp-submit", "loginform");
-			});
+		$action = $_REQUEST['action'] ?? 'login';
+		switch ($action) {
+			case "lostpassword":
+			case "retrievepassword":
+				if ($reset) {
+					add_action("login_footer", function () {
+						captcha_common_script( "wp-submit", "lostpasswordform" );
+					});
+				}
+				break;
+			case "register":
+				if ($register) {
+					add_action("login_footer", function () {
+						captcha_common_script( "wp-submit", "registerform" );
+					});
+				}
+				break;
+			case "login":
+			default:
+				if ($login) {
+					add_action("login_footer", function () {
+						captcha_common_script( "wp-submit", "loginform" );
+					});
+				}
+				break;
 		}
 	}
-	if ($commit && is_user_logged_in()) {
+	if ($commit && !is_user_logged_in()) {
+		add_filter("preprocess_comment", "captcha_commit_check");
 		add_action("comment_form", "captcha_common_form");
-		add_action("", function () {
+		add_action("comment_form_after", function () {
 			captcha_common_script("submit", "commentform");
 		}, "submit");
 	}
